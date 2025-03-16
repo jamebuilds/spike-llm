@@ -50,6 +50,9 @@ class ExtractTogetherAi
         return <<<END
 You are a helpful assistant and expert in reading certificates.
 The image is a certificate of conformity (CoC) for a fire safety product.
+Coc holder is the person or entity this certificate is issued to.
+Certificate Number sometimes could contain Revision number like Rev. 11.
+Revision date and Expiry date are optional, if they dont exists, return as null.
 Extract the data and return ONLY a valid JSON object with the following structure as an example.
 {
     'certificate_number': '1234567890',
