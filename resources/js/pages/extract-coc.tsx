@@ -26,7 +26,32 @@ export default function ExtractCoc() {
             <Head title="Extract CoC" />
 
             <Heading title="Extract Conformity Certificate"
-                     description="Try extracting a Conformity Certificate from an image using a prompt we created. The model we are using https://www.together.ai/models/llama-3-2." />
+                     description="Try extracting a Conformity Certificate from an image using a prompt we created." />
+
+            <ul className="list-disc list-inside text-muted-foreground text-sm">
+                <li>Extract data using prompts and convert it to JSON for programmatic use in code</li>
+                <li>Using model https://www.together.ai/models/llama-3-2</li>
+                <li>Real certificates are in pdf, we assume its transform to an image and uploaded here</li>
+            </ul>
+
+            <div className="text-muted-foreground my-6 flex flex-col text-sm ">
+                <div>Samples files:</div>
+
+                <a className="underline" href={route('download-sample-coc.invoke', {
+                    file_name: '22A0614.png'
+                })}
+                >Download (22A0614)</a>
+
+                <a className="underline" href={route('download-sample-coc.invoke', {
+                    file_name: 'CLS1B-081460-0025-Rev.-00.png'
+                })}
+                >Download (CLS1B 081460 0025 Rev. 00)</a>
+
+                <a className="underline" href={route('download-sample-coc.invoke', {
+                    file_name: 'FSP-2018-1188-DoC.png'
+                })}
+                >Download (FSP-2018-1188)</a>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-2">
@@ -45,36 +70,6 @@ export default function ExtractCoc() {
                     {processing ? 'Uploading...' : 'Extract'}
                 </Button>
             </form>
-
-            <div className="mt-4 flex flex-col">
-                <div>Some samples to test out:</div>
-                <a
-                    href={route('download-sample-coc.invoke', {
-                        file_name: '22A0614.png'
-                    })}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download="22A0614.png"
-                >Download sample 1 (22A0614)</a>
-
-                <a
-                    href={route('download-sample-coc.invoke', {
-                        file_name: 'CLS1B-081460-0025-Rev.-00.png'
-                    })}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download="CLS1B-081460-0025-Rev.-00.png"
-                >Download sample 1 (CLS1B 081460 0025 Rev. 00)</a>
-
-                <a
-                    href={route('download-sample-coc.invoke', {
-                        file_name: 'FSP-2018-1188-DoC.png'
-                    })}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download="FSP-2018-1188-DoC.png"
-                >Download sample 1 (FSP-2018-1188)</a>
-            </div>
         </div>
     );
 }
