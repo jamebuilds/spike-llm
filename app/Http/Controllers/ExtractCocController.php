@@ -25,7 +25,7 @@ class ExtractCocController extends Controller
 
         // extract the answer and the image in base64
         $service = new ExtractTogetherAi();
-//        $service = new ExtractOllama();
+        // $service = new ExtractOllama();
         [$answer, $imageInBase64] = $service->handle($request->file('coc_file')->get());
 
         // keep the data in the session to load later after redirect

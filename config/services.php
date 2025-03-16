@@ -38,5 +38,9 @@ return [
     'together_ai' => [
         'token' => env('TOGETHER_AI_TOKEN'),
         'url' => env('TOGETHER_AI_URL', "https://api.together.xyz/v1/chat/completions"),
+    ],
+
+    'ollama' => [
+        'url' => env('OLLAMA_URL', 'http://localhost:11434/api/chat'),
     ]
 ];

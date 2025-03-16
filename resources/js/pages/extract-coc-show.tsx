@@ -22,7 +22,7 @@ export default function ExtractCoc() {
             <img src={data.image} alt="Coc File" />
 
             <div className="my-10">
-                <Heading title="Answer" description="Here is the answer from the LLM and we are trying to display in JSON." />
+                <Heading title="Answer" description="Here is the answer from the LLM and we are trying to display in JSON using prompt." />
                 <div className="whitespace-pre-wrap break-words mb-4">
                     {data.answer}
                 </div>

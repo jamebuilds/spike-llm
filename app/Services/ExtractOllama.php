@@ -39,7 +39,7 @@ class ExtractOllama
         ];
 
         $response = Http::timeout(240)
-            ->post('http://localhost:11434/api/chat', $payload);
+            ->post(config('services.ollama.url'), $payload);
 
         return [
             // extract the answer from the response json
