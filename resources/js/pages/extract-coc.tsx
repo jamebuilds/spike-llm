@@ -25,7 +25,7 @@ export default function ExtractCoc() {
         <div className="p-6 max-w-2xl mx-auto">
             <Head title="Extract CoC" />
 
-            <Heading title="Extract Conformity Certificate" description="Try extracting a Conformity Certificate from an image using a prompt we created!." />
+            <Heading title="Extract Conformity Certificate" description="Try extracting a Conformity Certificate from an image using a prompt we created." />
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-2">
