@@ -1,11 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import type { SharedData } from '@/types';
-import HeadingSmall from '@/components/heading-small';
 import Heading from '@/components/heading';
 
 export default function ExtractCoc() {

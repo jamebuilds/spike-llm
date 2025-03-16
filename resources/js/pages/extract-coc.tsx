@@ -26,7 +26,7 @@ export default function ExtractCoc() {
             <Head title="Extract CoC" />
 
             <Heading title="Extract Conformity Certificate"
-                     description="Try extracting a Conformity Certificate from an image using a prompt we created." />
+                     description="Try extracting a Conformity Certificate from an image using a prompt we created. The model we are using https://www.together.ai/models/llama-3-2." />
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-2">
