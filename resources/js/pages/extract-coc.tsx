@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import Heading from '@/components/heading';
 
 export default function ExtractCoc() {
     const { data, setData, post, processing, errors } = useForm({
@@ -26,7 +25,7 @@ export default function ExtractCoc() {
         <div className="p-6 max-w-2xl mx-auto">
             <Head title="Extract CoC" />
 
-            <h1 className="text-xl font-semibold mb-10">Extract Conformity Certificate</h1>
+            <Heading title="Extract Conformity Certificate" description="Try extracting a Conformity Certificate from an image using a prompt we created!." />
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid gap-2">
