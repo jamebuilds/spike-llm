@@ -31,7 +31,8 @@ class ExtractCocController extends Controller
         // keep the data in the session to load later after redirect
         $uploadKeyInSession = Str::random(32);
         session([$uploadKeyInSession => [
-//            'image' => $imageInBase64,
+             // don't send the image for now, because
+             // 'image' => $imageInBase64,
             'image' => '',
             'answer' => $answer,
         ]]);
