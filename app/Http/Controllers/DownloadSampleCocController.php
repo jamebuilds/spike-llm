@@ -15,6 +15,6 @@ class DownloadSampleCocController extends Controller
             'file_name' => Rule::in(['22A0614.png', 'CLS1B-081460-0025-Rev.-00.png', 'FSP-2018-1188-DoC.png']),
         ]);
 
-        return Storage::disk('public')->download("{$validated['file_name']}");
+        return Storage::disk('static')->download("{$validated['file_name']}");
     }
 }
