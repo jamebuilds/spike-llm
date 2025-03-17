@@ -39,7 +39,6 @@ class ExtractTogetherAi
             ->contentType('application/json')
             ->post(config('services.together_ai.url'), $payload);
 
-        Log::info($response->json());
         return [
             // extract the answer from the response json
             $response->json()['choices'][0]['message']['content'],

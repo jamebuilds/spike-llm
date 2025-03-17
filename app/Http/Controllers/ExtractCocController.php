@@ -31,10 +31,7 @@ class ExtractCocController extends Controller
         // keep the data in the session to load later after redirect
         $uploadKeyInSession = Str::random(32);
         session([$uploadKeyInSession => [
-             // don't send the image for now, because there seems to be some problem in laravel cloud to
-             // load this huge intertia data
-             // 'image' => $imageInBase64,
-            'image' => '',
+            'image' => $imageInBase64,
             'answer' => $answer,
         ]]);
 
