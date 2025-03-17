@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ExtractTogetherAi
 {
@@ -38,6 +39,7 @@ class ExtractTogetherAi
             ->contentType('application/json')
             ->post(config('services.together_ai.url'), $payload);
 
+        Log::info($response->json());
         return [
             // extract the answer from the response json
             $response->json()['choices'][0]['message']['content'],
