@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\ExternalApi;
+namespace App\Services\ExtractApi;
 
 use Illuminate\Support\Facades\Http;
 

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DataTransferObject\ExtractedData;
-use App\Services\ExternalApi\TogetherAiOneApi;
+use App\Services\ExtractApi\TogetherAiOneApi;
 use App\ValueObject\ConformityCertificateValueObject;
 use Illuminate\Support\Str;
 
