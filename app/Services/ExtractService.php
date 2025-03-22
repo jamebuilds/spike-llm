@@ -5,6 +5,8 @@ namespace App\Services;
 use App\DataTransferObject\ExtractedData;
 use App\Services\ExtractApi\TogetherAiOneApi;
 use App\ValueObject\ConformityCertificateValueObject;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 
 class ExtractService
@@ -14,13 +16,21 @@ class ExtractService
         $service = new TogetherAiOneApi();
 
         $result = null;
-        $maxLoop = 3;
+        $maxLoop = 5;
 
         // loop it to ensure that it will return a valid json
         while ($result === null && $maxLoop > 0) {
-            [$answer, $imageInBase64] = $service->handle($image, $this->generateInitialPrompt());
-            $result = $this->extractJson($answer);
-            $maxLoop--;
+            Sleep::for(0.5)->second();
+            try {
+                [$answer, $imageInBase64] = $service->handle($image, $this->generateInitialPrompt());
+                $result = $this->extractJson($answer);
+                $this->validate($result);
+            } catch (\Exception $e) {
+                Log::info($e->getMessage());
+                $result = null;
+            } finally {
+                $maxLoop--;
+            }
         }
 
         return new ExtractedData(
@@ -30,20 +40,30 @@ class ExtractService
         );
     }
 
-    protected function extractJson(string $answer): ConformityCertificateValueObject|null
+    protected function extractJson(string $answer): ConformityCertificateValueObject
     {
-        try {
-            // remove all other text from the answer, only take the json content
-            $extractJson = "{" . Str::between($answer, "{", "}") . "}";
-            // remove all new line because we cannott do json_decode with it
-            $extractJson = Str::replace(["\n"], '', $extractJson);
-            // change single quote into double quote for a valid json string
-            $extractJson = Str::replace("'", '"', $extractJson);
+        // remove all other text from the answer, only take the json content
+        $extractJson = "{" . Str::between($answer, "{", "}") . "}";
+        // remove all new line because we cannott do json_decode with it
+        $extractJson = Str::replace(["\n"], '', $extractJson);
+        // change single quote into double quote for a valid json string
+        $extractJson = Str::replace("'", '"', $extractJson);
 
-            // we could also potentially add in validator for each field in the object
-            return ConformityCertificateValueObject::fromJsonString($extractJson);;
-        } catch (\Exception $e) {
-            return null;
+        // we could also potentially add in validator for each field in the object
+        return ConformityCertificateValueObject::fromJsonString($extractJson);;
+    }
+
+    protected function validate(ConformityCertificateValueObject $result): void
+    {
+        // validate the coc number format
+        $certificateNumber = $result->certificateNumber;
+
+        $result = preg_match('/^\d{2}[A-Z]\d{4,5}$/i', $certificateNumber) // element
+            || preg_match('/^CLS(1B|2|1A|AN|BN|2N)\s((\d{6}\s\d{4})|(\d{2}\s\d{2}\s\d{5}\s\d{3}))$/i', $certificateNumber) // tuv sud
+            || preg_match('/^FSP-\d{4}-\d{4}(-\d{1,2})?$/i', $certificateNumber); // setsco
+
+        if (!$result) {
+            throw new \Exception('invalid certificate number format');
         }
     }
 
@@ -56,6 +76,7 @@ The image is a certificate of conformity (CoC) for a fire safety product.
 ## Here is a description of some of the fields in the certificate:
 coc_holder is the person or entity this certificate is issued to.
 certificate_number is the unique number assigned to the certificate.
+certificate_number sometimes will contains Revision number like Rev. 00, remove it from the certificate_number.
 Here are some rules for the certificate_number:
   certificate_number sometimes could contain Revision number like Rev. 11.
   certificate_number can be in this format “FSP-NNNN-NNNN-EE” where “NNNN” represents 4 numbers and “EE” represents 2 optional numbers
