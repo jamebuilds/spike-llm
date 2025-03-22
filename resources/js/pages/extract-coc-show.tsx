@@ -1,6 +1,9 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import type { SharedData } from '@/types';
 import Heading from '@/components/heading';
+import { Button, buttonVariants } from '@/components/ui/button';
+
+import AppLogoIcon from '@/components/app-logo-icon';
 
 export default function ExtractCoc() {
     const { data } = usePage<SharedData>().props;
@@ -26,6 +29,10 @@ export default function ExtractCoc() {
                     }
                 </div>
             </div>
+
+            <Button asChild className="w-full">
+                <Link href={route('home')}>Try another one</Link>
+            </Button>
         </div>
     );
 }
