@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ExtractOllama;
 use App\Services\ExtractService;
-use App\Services\ExtractTogetherAi;
-use App\Services\ExtractTogetherAiOne;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -32,7 +29,7 @@ class ExtractCocController extends Controller
         $uploadKeyInSession = Str::random(32);
         session([$uploadKeyInSession => [
             'image' => $data->imageBase64,
-            'result' => $data->certificate ? (string)$data->certificate : "{}",
+            'result' => $data->certificate ? (string)$data->certificate : null,
             'answer' => $data->answer,
         ]]);
 

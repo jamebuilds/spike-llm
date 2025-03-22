@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\ExternalApi;
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
-class ExtractTogetherAi
+class TogetherAiApi
 {
     public function handle(string $fileContent): array
     {

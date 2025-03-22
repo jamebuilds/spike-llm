@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DataTransferObject\ExtractedData;
+use App\Services\ExternalApi\TogetherAiOneApi;
 use App\ValueObject\ConformityCertificateValueObject;
 use Illuminate\Support\Str;
 
@@ -10,7 +11,7 @@ class ExtractService
 {
     public function handle(string $image): ExtractedData
     {
-        $service = new ExtractTogetherAiOne();
+        $service = new TogetherAiOneApi();
 
         $result = null;
         $maxLoop = 3;

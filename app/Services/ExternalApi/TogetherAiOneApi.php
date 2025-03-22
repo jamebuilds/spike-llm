@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\ExternalApi;
 
 use Illuminate\Support\Facades\Http;
 
-class ExtractTogetherAiOne
+class TogetherAiOneApi
 {
     public function handle(string $fileContent, $prompt): array
     {
