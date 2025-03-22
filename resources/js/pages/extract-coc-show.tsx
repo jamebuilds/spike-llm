@@ -17,9 +17,13 @@ export default function ExtractCoc() {
             <img src={data?.image} alt="Coc File" />
 
             <div className="my-10">
-                <Heading title="Answer" description="Here is the answer from the LLM and we are TRYING to display in JSON using prompt." />
+                <Heading title="Answer"
+                         description="Here is the answer from the LLM and we are TRYING to display in JSON using prompt." />
                 <div className="whitespace-pre-wrap break-words mb-4">
-                    {data?.answer}
+                    {data?.result
+                        ? JSON.stringify(JSON.parse(data?.result || '{}'), null, 2)
+                        : data?.answer
+                    }
                 </div>
             </div>
         </div>

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Services\ExtractOllama;
+use App\Services\ExtractService;
 use App\Services\ExtractTogetherAi;
+use App\Services\ExtractTogetherAiOne;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -23,16 +25,15 @@ class ExtractCocController extends Controller
             abort(404);
         }
 
-        // extract the answer and the image in base64
-        $service = new ExtractTogetherAi();
-        // $service = new ExtractOllama();
-        [$answer, $imageInBase64] = $service->handle($request->file('coc_file')->get());
+        $service = new ExtractService();
+        $data = $service->handle($request->file('coc_file')->get());
 
         // keep the data in the session to load later after redirect
         $uploadKeyInSession = Str::random(32);
         session([$uploadKeyInSession => [
-            'image' => $imageInBase64,
-            'answer' => $answer,
+            'image' => $data->imageBase64,
+            'result' => $data->certificate ? (string)$data->certificate : "{}",
+            'answer' => $data->answer,
         ]]);
 
         return redirect()->route('extract-coc.show', ['session_key' => $uploadKeyInSession]);
