@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 
-class ExtractService
+class ExtractRetryService
 {
     public function handle(string $image): ExtractedData
     {

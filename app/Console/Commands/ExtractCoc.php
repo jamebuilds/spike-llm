@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\ExtractService;
+use App\Services\ExtractRetryService;
 use App\Services\ExtractZeroPromptService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
