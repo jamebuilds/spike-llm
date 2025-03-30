@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\ExtractService;
+use App\Services\ExtractZeroPromptService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,7 +30,8 @@ class ExtractCoc extends Command
     {
         $image = Storage::disk('static')->get('FSP-2018-1188-DoC.png');
 
-        $data = app(ExtractService::class)->handle($image);
+//        $data = app(ExtractService::class)->handle($image);
+        $data = app(ExtractZeroPromptService::class)->handle($image);
 
         dump($data->answer);
         dump($data->certificate);
