@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ExtractReflectionService;
 use App\Services\ExtractRetryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,7 +23,8 @@ class ExtractCocController extends Controller
             abort(404);
         }
 
-        $service = new ExtractRetryService();
+//        $service = new ExtractRetryService();
+        $service = new ExtractReflectionService();
         $data = $service->handle($request->file('coc_file')->get());
 
         // keep the data in the session to load later after redirect

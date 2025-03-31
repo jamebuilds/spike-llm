@@ -3,50 +3,61 @@
 namespace App\Services;
 
 use App\DataTransferObject\ExtractedData;
-use App\Services\ExtractApi\TogetherAiOneApi;
 use App\ValueObject\ConformityCertificateValueObject;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Sleep;
-use Illuminate\Support\Str;
 
 class ExtractReflectionService
 {
     public function handle(string $image): ExtractedData
     {
-        // Step 1: Initial extraction
-        $imageInBase64 = $image ? "data:image/jpeg;base64," . base64_encode($image) : '';
-        $payload = $this->generatePayload($this->generateInitialPrompt(), $imageInBase64);
-        // call the together ai api
-        $response = Http::timeout(240)
-            ->withToken(config('services.together_ai.token'))
-            ->contentType('application/json')
-            ->post(config('services.together_ai.url'), $payload);
-        $initialText = $response->json()['choices'][0]['message']['content'] ?? '';
+        $retry = 3;
+        $result = null;
 
-        // Step 2: Try to extract JSON
-        $extractedJson = $this->extractJsonFromText($initialText);
+        while ($retry > 0 && !$result) {
+            try {
+                // Step 1: Initial extraction
+                $imageInBase64 = $image ? "data:image/jpeg;base64," . base64_encode($image) : '';
+                $payload = $this->generatePayload($this->generateInitialPrompt(), $imageInBase64);
+                $response = Http::timeout(240)
+                    ->withToken(config('services.together_ai.token'))
+                    ->contentType('application/json')
+                    ->post(config('services.together_ai.url'), $payload);
+                $initialText = $response->json()['choices'][0]['message']['content'] ?? '';
 
-        dump($initialText);
-        dump($extractedJson);
+                // Step 2: Try to extract JSON
+                $extractedJson = $this->extractJsonFromText($initialText);
 
-        // Step 3: If failed, run reflection
-        if (!$extractedJson) {
-            $reflectionPrompt = $this->generateReflectionPrompt($initialText);
-            $reflectionPayload = $this->generatePayload($reflectionPrompt, $imageInBase64);
+                // Step 3: Reflect if it is not a valid json
+                if (!$extractedJson) {
+                    $reflectionPrompt = $this->generateReflectionPromptInvalidJson($initialText);
+                    $reflectionPayload = $this->generatePayload($reflectionPrompt, $imageInBase64);
 
-            $reflectionResponse = Http::timeout(240)
-                ->withToken(config('services.together_ai.token'))
-                ->contentType('application/json')
-                ->post(config('services.together_ai.url'), $reflectionPayload);
+                    $reflectionResponse = Http::timeout(240)
+                        ->withToken(config('services.together_ai.token'))
+                        ->contentType('application/json')
+                        ->post(config('services.together_ai.url'), $reflectionPayload);
 
-            $reflectedText = $reflectionResponse->json()['choices'][0]['message']['content'] ?? '';
-            $extractedJson = $this->extractJsonFromText($reflectedText);
-            dump($reflectedText);
-            dump($extractedJson);
+                    $reflectedText = $reflectionResponse->json()['choices'][0]['message']['content'] ?? '';
+                    $extractedJson = $this->extractJsonFromText($reflectedText);
+
+                    if (!$extractedJson) {
+                        throw new \Exception('extract json failed');
+                    }
+                }
+
+                // Step 4: Check json keys are as expected
+                $result = ConformityCertificateValueObject::fromArray($extractedJson);
+
+                // Step 5: Validate the values, currently only validate the cert number
+                $this->validate($result);
+            } catch (\Exception $e) {
+                $result = null;
+                $retry--;
+                sleep(1);
+            }
         }
 
-        dd('end');
+        $answer = $initialText;
 
         return new ExtractedData(
             $answer,
@@ -103,7 +114,7 @@ IMPORTANT: Return ONLY a valid JSON object, no Markdown, no headings, no explana
 END;
     }
 
-    protected function generateReflectionPrompt(string $previousOutput): string
+    protected function generateReflectionPromptInvalidJson(string $previousOutput): string
     {
         return <<<END
 The following response was returned but did not strictly follow the instruction to output only a valid JSON object:
@@ -112,8 +123,22 @@ The following response was returned but did not strictly follow the instruction 
 $previousOutput
 ---
 
-Please extract and return ONLY the valid JSON part of the response. Do not include any markdown, formatting, or explanation. Just return the clean JSON.
+Please extract and return ONLY the valid JSON part of the response. Do not include any markdown, formatting, or explanation. Return with a valid Json Key. Just return the clean JSON.
 END;
+    }
+
+    protected function validate(ConformityCertificateValueObject $result): void
+    {
+        // validate the coc number format
+        $certificateNumber = $result->certificateNumber;
+
+        $result = preg_match('/^\d{2}[A-Z]\d{4,5}$/i', $certificateNumber) // element
+            || preg_match('/^CLS(1B|2|1A|AN|BN|2N)\s((\d{6}\s\d{4})|(\d{2}\s\d{2}\s\d{5}\s\d{3}))$/i', $certificateNumber) // tuv sud
+            || preg_match('/^FSP-\d{4}-\d{4}(-\d{1,2})?$/i', $certificateNumber); // setsco
+
+        if (!$result) {
+            throw new \Exception('invalid certificate number format');
+        }
     }
 
     protected function extractJsonFromText(string $text): ?array

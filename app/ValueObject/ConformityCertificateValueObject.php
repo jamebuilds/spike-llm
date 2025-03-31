@@ -18,6 +18,19 @@ readonly class ConformityCertificateValueObject
     {
     }
 
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            $data['certificate_number'] ?? throw new InvalidArgumentException('Missing certificate_number'),
+            $data['issue_date'] ?? throw new InvalidArgumentException('Missing issue_date'),
+            $data['revision_date'] ?? null,
+            $data['expiry_date'] ?? throw new InvalidArgumentException('Missing expiry_date'),
+            $data['coc_holder_name'] ?? throw new InvalidArgumentException('Missing coc_holder_name'),
+            $data['coc_holder_address'] ?? throw new InvalidArgumentException('Missing coc_holder_address'),
+            $data['coc_holder_nationality'] ?? throw new InvalidArgumentException('Missing coc_holder_nationality')
+        );
+    }
+
     public static function fromJsonString(string $json): self
     {
         $data = json_decode($json, true);

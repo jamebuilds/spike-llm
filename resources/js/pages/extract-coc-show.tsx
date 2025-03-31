@@ -22,12 +22,18 @@ export default function ExtractCoc() {
             <div className="my-10">
                 <Heading title="Answer"
                          description="Here is the answer from the LLM and we are TRYING to display in JSON using prompt." />
+
+                {!data?.result && <div className="text-muted-foreground text-sm text-red-500 mb-2">*Extraction was not successful, but here is the response from the LLM.</div>}
+
+                {data?.result && <div className="text-sm text-green-500 mb-2">*Extraction was successful, here is the json response from the LLM.</div>}
+
                 <div className="whitespace-pre-wrap break-words mb-4">
                     {data?.result
                         ? JSON.stringify(JSON.parse(data?.result || '{}'), null, 2)
                         : data?.answer
                     }
                 </div>
+
             </div>
 
             <Button asChild className="w-full">
